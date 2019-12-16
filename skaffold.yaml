@@ -1,0 +1,18 @@
+apiVersion: skaffold/v1
+kind: Config
+build:
+  artifacts:
+    - image: localhost:5000/api
+      context: .
+      docker: 
+        dockerfile: ./skaffold/api/Dockerfile
+    - image: localhost:5000/repository
+      context: .
+      docker: 
+        dockerfile: ./skaffold/repository/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - ./skaffold/api/deployment.yaml
+      - ./skaffold/api/service.yaml
+      - ./skaffold/repository/deployment.yaml

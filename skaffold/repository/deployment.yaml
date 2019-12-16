@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repository
+  namespace: dev
+  labels:
+    app: repository
+    component: repository
+    role: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: repository
+      role: dev
+  template:
+    metadata:
+      #annotations:
+        #config.linkerd.io/enable-debug-sidecar: "true"
+        #linkerd.io/inject: enabled
+      labels:
+        component: repository
+        role: dev
+    spec:
+      #securityContext:
+      containers:
+        - name: repository
+          #securityContext:
+          image: "localhost:5000/repository:dev"
+          ports:
+          - containerPort: 8001
+            name: healthcheck
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: healthcheck
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: healthcheck
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi

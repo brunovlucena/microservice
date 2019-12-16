@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repository
+  labels:
+    app: repository
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30002
+      protocol: TCP
+      name: postgres
+  selector:
+    app: repository
+    component: repository
+    role: dev

@@ -1,0 +1,20 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: prometheus-rules-api
+  labels:
+    component: api
+    role: dev
+spec:
+  groups:
+  - name: ./api.rules
+    rules:
+    - alert: apiPanicRequests
+      expr: rate(promhttp_metric_handler_requests_total{code="200"}[1m]) > 0.02
+      for: 1m
+      labels:
+        severity: error
+      annotations:
+        summary: "api Usage Too High (instance {{ $labels.instance }})"
+        description: "The amount of the requests is over the limit\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"

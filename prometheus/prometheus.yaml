@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: api
+  namespace: dev
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: dev
+spec:
+  serviceAccountName: api
+  serviceMonitorSelector:
+    matchLabels:
+      component: api
+      role: dev
+  ruleSelector:
+    matchLabels:
+      component: api
+      role: dev
+  enableAdminAPI: true

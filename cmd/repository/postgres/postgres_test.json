@@ -1,0 +1,42 @@
+[
+  {
+    "name": "pod-1p",
+    "metadata": {
+      "monitoring": {
+        "enabled": "true"
+      },
+      "limits": {
+        "cpu": {
+          "enabled": "false",
+          "value": "300m"
+        }
+      }
+    }
+  },
+  {
+    "name": "pod-2p",
+    "metadata": {
+      "monitoring": {
+        "enabled": "false"
+      },
+      "limits": {
+          "enabled": "true",
+          "value": "250m"
+      }
+    }
+  },
+  {
+    "name": "pod-3p",
+    "metadata": {
+      "monitoring": {
+        "enabled": "true"
+      },
+      "limits": {
+        "cpu": {
+          "enabled": "true",
+          "value": "550m"
+        }
+      }
+    }
+  }
+]

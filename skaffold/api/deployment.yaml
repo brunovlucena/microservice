@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: api
+  labels:
+    app: api
+    component: api
+    role: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: api
+      role: dev
+  template:
+    metadata:
+      labels:
+        component: api
+        role: dev
+    spec:
+      #securityContext:
+      containers:
+        - name: api
+          #securityContext:
+          image: "localhost:5000/api"
+          ports:
+          - containerPort: 8000
+            name: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
