@@ -1,8 +1,9 @@
 ### API In Golang
 
-(Sync) REST API in Go(1.13) using Chi Router
+(Async) REST API in Go(1.13) using Chi Router
 
 - Repository: Postgres
+- Broker: RabbitMQ
 
 **NOTE1**: Tested with minikube v1.5.1 and Kubernetes: v1.16.2
 
