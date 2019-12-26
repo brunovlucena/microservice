@@ -3,7 +3,7 @@ FROM golang:1.13 AS builder
 COPY ./cmd/api /api
 COPY ./cmd/data /data
 COPY ./cmd/utils /utils
-COPY ./cmd/repository /repository
+COPY ./cmd/messaging /messaging
 WORKDIR /api
 # CGO is disabled as it is not compatible with the alpine image. 
 # To use CGO write normal Go code that imports a pseudo-package "C". 

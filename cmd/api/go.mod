@@ -4,7 +4,7 @@ go 1.13
 
 replace (
 	github.com/brunovlucena/microservice/cmd/data => ../data
-	github.com/brunovlucena/microservice/cmd/repository => ../repository
+	github.com/brunovlucena/microservice/cmd/messaging => ../messaging
 	github.com/brunovlucena/microservice/cmd/utils => ../utils
 )
 
@@ -19,6 +19,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/viper v1.6.1
+	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271
 	github.com/stretchr/testify v1.4.0 // indirect
 	golang.org/x/net v0.0.0-20190613194153-d28f0bde5980
 )

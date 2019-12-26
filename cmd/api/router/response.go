@@ -16,8 +16,7 @@ type ConfigResponse struct {
 
 // ConfigResponse implements Render Interface.
 func (rd *ConfigResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	w.Header().Set("Location", "http://127.0.0.1:8000/") // CHECK: K6 was complaining about missing header
-	rd.ServedBy = utils.GetIP()                          // Pod's IP
+	rd.ServedBy = utils.GetIP() // Pod's IP
 	return nil
 }
 

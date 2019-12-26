@@ -36,8 +36,7 @@ func NewPostgres(host, port, user, password, dbname string) (*Postgres, error) {
 
 // Connect stablishes a connection with the database
 func connect(host, port, user, password, dbname string) (*sql.DB, error) {
-	// info: sslmode - disabled
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("sslmode=disable host=%s port=%s user=%s password=%s dbname=%s", host, port, user, password, dbname)
 
 	// opens connection
 	db, err := sql.Open("postgres", psqlInfo)

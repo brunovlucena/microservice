@@ -2,16 +2,17 @@ package router
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 	"time"
 
 	. "github.com/brunovlucena/microservice/cmd/data"
 	. "github.com/brunovlucena/microservice/cmd/messaging"
+	"github.com/streadway/amqp"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -27,9 +28,10 @@ const (
 )
 
 var (
-	histogram  *prometheus.HistogramVec
-	serverAddr string
-	client     IMessagingClient
+	histogram        *prometheus.HistogramVec
+	serverAddr       string
+	client           IMessagingClient
+	connectionString string
 )
 
 func init() {
@@ -51,7 +53,6 @@ func init() {
 	}
 
 	// Broker
-	var connectionString string
 	if connectionString = os.Getenv("AMQP_ADDR"); connectionString == "" {
 		connectionString = viper.Get("amqpAddr").(string)
 	}
@@ -144,35 +145,67 @@ func ConfigCtx(next http.Handler) http.Handler {
 		configName := sk[2]                       // configName: foo
 		logrus.Info("GET /configs/" + configName) //TODO: remove
 
-		//config, err := repo.Find(configName) // gets from repository
-
-		duration := time.Since(start)
-		// end tracking
-
-		// render errors
-		if err != nil {
-			render.Render(w, r, ErrRender(err))
-			return
-		} else {
-			// prometheus: observe error
-			code := http.StatusUnprocessableEntity
-			observe(duration, code, "findall")
-
-			// log
-			logrus.WithFields(logrus.Fields{
-				"cmd":      "Find",
-				"duration": duration,
-				"code":     code,
-			}).Debug("Records found!")
+		// publish to requests
+		config := Config{
+			Data: DataMap{"name": configName},
+		}
+		cr := &ConfigRequest{
+			Method: r.Method,
+			Path:   r.URL,
+			Config: config,
 		}
 
-		// prometheus
-		code := http.StatusFound
-		observe(duration, code, "find")
+		jBytes, err := json.Marshal(&cr)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"cmd": "ConfigCtx",
+			}).Debug(err.Error())
+		}
+		err = client.Publish(jBytes, "api", "fanout", "requests")
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"cmd": "ConfigCtx",
+			}).Debug(err.Error())
+		}
 
-		// save config
-		ctx := context.WithValue(r.Context(), "config", config)
-		next.ServeHTTP(w, r.WithContext(ctx))
+		// consume from responses
+		// RabbitMQ
+		exchangeName := "api"
+		exchangeType := "fanout"
+		queueName := "responses"
+
+		client.ConnectToBroker(connectionString)
+		client.Subscribe(exchangeName, exchangeType, appName, queueName, func(d amqp.Delivery) {
+			var c *Config
+			err := json.Unmarshal(d.Body, &c)
+			duration := time.Since(start)
+			// end tracking
+
+			// render errors
+			if err != nil {
+				render.Render(w, r, ErrRender(err))
+				return
+			} else {
+				// prometheus: observe error
+				code := http.StatusUnprocessableEntity
+				observe(duration, code, "findall")
+
+				// log
+				logrus.WithFields(logrus.Fields{
+					"cmd":      "Find",
+					"duration": duration,
+					"code":     code,
+				}).Debug("Records found!")
+			}
+
+			// prometheus
+			code := http.StatusFound
+			observe(duration, code, "find")
+
+			// save config
+			ctx := context.WithValue(r.Context(), "config", c)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	})
 }
 
@@ -182,7 +215,8 @@ func FindAll(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
 	// get configs
-	//configs, err := repo.FindAll()
+	var configs []*Config
+	var err error
 
 	duration := time.Since(start)
 	// end tracking
@@ -237,7 +271,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//c, err := repo.Create(&cr.Config)
+	// publish to request
+
+	// consume from responses
+	c := &Config{}
 
 	duration := time.Since(start)
 	// end tracking
@@ -295,8 +332,10 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// update record
-	//c, err := repo.Update(&cr.Config)
+	// publish to request
+
+	// consume from responses
+	c := &Config{}
 
 	duration := time.Since(start)
 	// end tracking
@@ -337,7 +376,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	config := r.Context().Value("config").(*Config)
 
 	// removes from database
-	//_, err := repo.Remove(config.Data["name"].(string))
+	var err error
 
 	duration := time.Since(start)
 	// end tracking
@@ -375,10 +414,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	// start tracking
 	start := time.Now()
 	// get params
-	params, _ := url.ParseQuery(r.URL.String())
+	//params, _ := url.ParseQuery(r.URL.String())
 
 	// get configs
-	//configs, err := repo.Search(params)
+	var configs []*Config
+	var err error
 
 	duration := time.Since(start)
 	// end tracking

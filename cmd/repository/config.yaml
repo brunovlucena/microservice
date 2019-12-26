@@ -1,9 +1,14 @@
+# Postgres
 dType: "postgres"
-dHost: "localhost"
+dHost: "postgres.storage"
 dPort: "5432"
-dUser: "postgres"
-dPass: "postgres"
 dbName: "configsdb"
 maxOpenConns: 50
 maxIdleConns: 20
-amqpAddr: "amqp://user:pass@localhost:5672"
+dUser: "postgres"
+dPass: "postgres"
+# Use vault-k8s to get credentials instead of 
+# credentials above or environment variables.
+vault: true
+# RabbitMQ
+amqpAddr: "amqp://user:pass@rabbitmq.storage:5672"

@@ -26,10 +26,9 @@ build() {
 #  $ ./helper.sh param1 [param2]
 # * param1: load-examples
 connect_postgres() {
-    local CONN="$1"
-    local DATABASE="$2"
+    local CONN="user=postgres password=postgres host=localhost port=5432 dbname=configsdb sslmode=disable"
 
-    psql "$CONN" "$DATABASE" -c "select * from configs;"
+    psql "$CONN" -c "select * from configs;"
 }
 
 # Builds and Deploys to K8s.
@@ -102,12 +101,12 @@ load_test() {
 #  $ ./helper.sh param1 [param2]
 # * param1: load-examples
 load_examples() {
-    local CONN="$1"
-    local DATABASE="$2"
+    CONN1="user=postgres password=postgres host=localhost port=5432 sslmode=disable"
+    CONN2="user=postgres password=postgres host=localhost port=5432 dbname=configsdb sslmode=disable"
+    DATABASE=configsdb
 
-    psql "$CONN" -c "drop database $DATABASE" || true
-    psql "$CONN" -c "create database $DATABASE" || true
-    psql "$CONN"< test/examples.sql || true
+    psql "$CONN1" -c "create database $DATABASE" || true
+    psql "$CONN2"< test/examples.sql || true
 }
 
 # Runs App.

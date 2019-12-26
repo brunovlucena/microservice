@@ -8,14 +8,18 @@ metadata:
     component: repository
     role: dev
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       component: repository
       role: dev
   template:
     metadata:
-      #annotations:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/agent-inject-secret-configs: "database/static-creds/configs"
+        vault.hashicorp.com/role: "microservice"
         #config.linkerd.io/enable-debug-sidecar: "true"
         #linkerd.io/inject: enabled
       labels:
@@ -23,23 +27,14 @@ spec:
         role: dev
     spec:
       #securityContext:
+      serviceAccountName: microservice
       containers:
         - name: repository
           #securityContext:
           image: "localhost:5000/repository:dev"
           ports:
-          - containerPort: 8001
+          - containerPort: 5432
             name: healthcheck
-          livenessProbe:
-            httpGet:
-              path: /ping
-              port: healthcheck
-          readinessProbe:
-            httpGet:
-              path: /ping
-              port: healthcheck
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
           resources:
             limits:
               cpu: 100m
@@ -47,3 +42,9 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: microservice
+  namespace: dev

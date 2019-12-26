@@ -1,10 +1,3 @@
 serverAddr: ":8000"
-dType: "postgres"
-dHost: "postgres.storage"
-dPort: "5432"
-dUser: "postgres"
-dPass: "postgres"
-dbName: "configsdb"
-maxOpenConns: 50
-maxIdleConns: 20
 amqpAddr: "amqp://user:pass@localhost:5672"
+#amqpAddr: "amqp://user:pass@rabbitmq.storage:5672"

@@ -8,3 +8,10 @@ dissasemble(){
     go tool objdump main
 }
 
+debug() {
+    NS=storage
+    CONTAINER=nicolaka/netshoot
+    kubectl run -n $NS --generator=run-pod/v1 tmp-shell --rm -i --tty --image $CONTAINER -- /bin/bash
+}
+
+"$@"

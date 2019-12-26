@@ -1,8 +1,5 @@
 .PHONY: help test build deploy api repository skaffold
 
-postgres_conn = "user=postgres password=postgres host=localhost port=5432 dbname=configsdb sslmode=disable"
-examples_db = configsdb
-
 help: ## Help. 
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -17,7 +14,7 @@ crud: ## Perform simple crud operations (On Cluster).
 	@./crud.sh
 
 connect-postgres: ## Runs dlv (make debug service=[api]).
-	@./helper.sh connect-postgres ${postgres_conn} ${examples_db}
+	@./helper.sh connect-postgres
 
 debug: ## Runs dlv (make debug service=[api]).
 	@./helper.sh debug ${service}
@@ -35,7 +32,7 @@ load-test: ## Run Load Tests (make load-test service=[api])
 	@./helper.sh load-test ${service}
 
 load-examples: ## Run Load Tests (make load-examples)
-	@./helper.sh load-examples ${postgres_conn} ${examples_db}
+	@./helper.sh load-examples
 
 run: ## Runs service on localhost (make run service=[api]).
 	@./helper.sh run ${service}

@@ -5,11 +5,11 @@
 - Repository: Postgres
 - Broker: RabbitMQ
 
-**NOTE1**: Tested with minikube v1.5.1 and Kubernetes: v1.16.2
+*NOTE1*: Tested with minikube v1.5.1 and Kubernetes: v1.17.0
 
-**NOTE2**: You should change `configs.yaml` (amdqAddr and dHost) to localhost or add to `127.0.0.1 postgres.storage` to `/etc/hosts`
+*NOTE2*: You should change `configs.yaml` (amdqAddr and dHost) to localhost or add to `127.0.0.1 postgres.storage` to `/etc/hosts`
 
-**How to Test(Cluster)**
+*How to Test(Cluster)*
 
 ```sh
 go get github.com/brunovlucena/microservice
@@ -22,7 +22,7 @@ make crud
 make load-test (Broken)
 ```
 
-**How to Test(locally)**
+*How to Test(locally)*
 
 ```sh
 go get github.com/brunovlucena/microservice
@@ -38,7 +38,7 @@ make run service=api
 make crud
 ```
 
-**Make Commands**
+*Make Commands*
 
 ```sh
 build                          Builds a binary for service (make build service=[api]).
@@ -65,7 +65,7 @@ tunnel-registry                Creates a tunnel to minikube's registry.
 
 #### Infra Endpoints
 
-**NOTE**: You should edit `/etc/hosts` ([minikube_ip] api.local)
+*NOTE*: You should edit `/etc/hosts` ([minikube_ip] api.local)
 
 - [Prometheus-Monitoring](http://api.local:31000)
 - [API](ttp://api.local:32000)
@@ -143,20 +143,20 @@ Response example:
 
 #### Schema
 
-- **Config**:
+- *Config*:
   - Name (string)
   - Metadata (nested key:value pairs where both key and value are strings of arbitrary length)
 
 
 #### Configuration
 
-- **API Variables**:
+- *API Variables*:
 
 | Variable | Type | Example | Description |
 | -------- | ---- | ------- | ----------- |
 |`SERVER_ADDR`| string | ":8000"			| ## Addres to Listen to
 
-- **Database Variables**:
+- *Database Variables*:
 
 | Variable | Type | Example | Description |
 | -------- | ---- | ------- | ----------- |
@@ -166,3 +166,10 @@ Response example:
 |`DATABASE_USER`| string | "postgres"			| ## User
 |`DATABASE_PASS`| string | "postgres"			| ## Pass
 |`DATABASE_NAME`| string | "myapp"				| ## Database name
+
+
+- *Vault*:
+
+export VAULT_ADDR='http://<ip>:30012'
+export VAULT_TOKEN=<token>
+
